@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/marsshen77/hello-boilerplate/issues"
   },
-  "homepage": "https://github.com/marsshen77/hello-boilerplate#readme"
+  "homepage": "https://github.com/marsshen77/hello-boilerplate#readme",
+  "devDependencies": {
+    "eslint": "^7.0.0"
+  }
 }
