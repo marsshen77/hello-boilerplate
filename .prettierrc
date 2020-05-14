@@ -7,19 +7,7 @@
     "trailingComma": "none",
     "overrides": [
         {
-            "files": "*.md",
-            "options": {
-                "tabWidth": 2
-            }
-        },
-        {
-            "files": "*.js",
-            "options": {
-                "tabWidth": 2
-            }
-        },
-        {
-            "files": "*.json",
+            "files": ["*.md","*.json",".eslintrc.js"],
             "options": {
                 "tabWidth": 2
             }
