@@ -7,7 +7,7 @@
     "trailingComma": "none",
     "overrides": [
         {
-            "files": ["*.md","*.json",".eslintrc.js"],
+            "files": ["*.md", "*.json", ".eslintrc.js", "webpack.*.ts", "*.html"],
             "options": {
                 "tabWidth": 2
             }
