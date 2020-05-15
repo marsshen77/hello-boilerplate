@@ -1,7 +1,10 @@
-import React from "react";
+import React from 'react';
 
-const Test: React.FC = () => {
-    return <div>I am test Component!</div>;
+interface IProps {
+    data: string;
+}
+const Test: React.FC<IProps> = (props) => {
+    return <div>{props.data}</div>;
 };
 
 export default Test;

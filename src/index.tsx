@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import Test from './components/TestComponent';
 import React from 'react';
+import Test from './components/TestComponent';
 
-ReactDOM.render(<Test />, document.getElementById('root'));
+ReactDOM.render(<Test data="i am test ccccc" />, document.getElementById('root'));
