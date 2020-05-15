@@ -42,7 +42,7 @@ async function start() {
         }
         // logSymbols.success 在 windows 平台渲染为 √ ，支持的平台会显示 ✔
         console.log(
-            `DevServer is running at ${chalk.magenta.underline(address)} ${logSymbols.success}`,
+            `DevServer is running at ${chalk.magenta.underline(address)} ${logSymbols.success}`
         );
     });
 
@@ -54,7 +54,7 @@ async function start() {
             httpServer.close();
             // 在 ctrl + c 的时候随机输出 'See you again' 和 'Goodbye'
             console.log(
-                chalk.greenBright.bold(`\n${Math.random() > 0.5 ? 'See you again' : 'Goodbye'}!`),
+                chalk.greenBright.bold(`\n${Math.random() > 0.5 ? 'See you again' : 'Goodbye'}!`)
             );
             // 退出 node 进程
             process.exit();
@@ -62,7 +62,6 @@ async function start() {
     });
 }
 
-// 写过 python 的人应该不会陌生这种写法
 // 判断这个模块是不是被直接运行的
 if (require.main === module) {
     start();

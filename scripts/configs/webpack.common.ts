@@ -42,6 +42,7 @@ const htmlMinifyOptions: HtmlMinifierOptions = {
   useShortDoctype: true
 };
 
+const src = resolve(PROJECT_ROOT, './src');
 const commonConfig: Configuration = {
   entry: ['react-hot-loader/patch', resolve(PROJECT_ROOT, './src/index.tsx')],
   output: {
@@ -56,7 +57,8 @@ const commonConfig: Configuration = {
     alias: {
       // 替换 react-dom 成 @hot-loader/react-dom 以支持 react hooks 的 hot reload
       'react-dom': '@hot-loader/react-dom',
-      '@': resolve(PROJECT_ROOT, './src')
+      '@': src,
+      '@components': resolve(src, './components')
     }
   },
   module: {

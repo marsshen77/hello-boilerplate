@@ -1,5 +1,7 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-import Test from './components/TestComponent';
+import Hello from '@/components/Hello';
 
-ReactDOM.render(<Test data="i am test ccccc" />, document.getElementById('root'));
+import './global.less';
+
+ReactDOM.render(<Hello data="React" />, document.getElementById('root'));
