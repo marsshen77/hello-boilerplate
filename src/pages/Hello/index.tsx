@@ -1,11 +1,11 @@
 import React from 'react';
-import './index.less';
+import styles from './index.module.less';
 
 interface IProps {
     data: string;
 }
 const Test: React.FC<IProps> = (props) => {
-    return <div className="hello-container">Hello {props.data} !</div>;
+    return <div className={styles.container}>Hello {props.data} !</div>;
 };
 
 export default Test;

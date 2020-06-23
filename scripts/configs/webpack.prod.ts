@@ -8,7 +8,9 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import CompressionPlugin from 'compression-webpack-plugin';
 
 import commonConfig from './webpack.common';
-import { COPYRIGHT, ENABLE_ANALYZE } from '../utils/constants';
+import { COPYRIGHT, ENABLE_ANALYZE, PROJECT_ROOT } from '../utils/constants';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import { resolve } from 'path';
 
 const mergedConfig = merge(commonConfig, {
   mode: 'production',
@@ -18,6 +20,14 @@ const mergedConfig = merge(commonConfig, {
       banner: COPYRIGHT
     }),
     new HashedModuleIdsPlugin(),
+    new ForkTsCheckerWebpackPlugin({
+      // 生产环境打包并不频繁，可以适当调高允许使用的内存，加快类型检查速度
+      typescript:{
+        memoryLimit: 1024*2,
+        configFile:resolve(PROJECT_ROOT, './src/tsconfig.json'),
+        profile:true
+      }
+    }),
     new MiniCssExtractPlugin({
       filename: 'css/[name].[contenthash].css',
       chunkFilename: 'css/[id].[contenthash].css',

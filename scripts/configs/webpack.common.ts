@@ -8,13 +8,13 @@ import { Options as HtmlMinifierOptions } from 'html-minifier';
 import { loader as MiniCssExtractLoader } from 'mini-css-extract-plugin';
 import { __DEV__, PROJECT_NAME, PROJECT_ROOT, HMR_PATH } from '../utils/constants';
 
-function getCssLoaders(importLoaders: number) {
+function getCssLoaders(importLoaders: number, module = true) {
   return [
     __DEV__ ? 'style-loader' : MiniCssExtractLoader,
     {
       loader: 'css-loader',
       options: {
-        modules: false,
+        modules: module,
         // 前面使用的每一个 loader 都需要指定 sourceMap 选项
         sourceMap: true,
         // 指定在 css-loader 前应用的 loader 的数量
@@ -57,8 +57,10 @@ const commonConfig: Configuration = {
     alias: {
       // 替换 react-dom 成 @hot-loader/react-dom 以支持 react hooks 的 hot reload
       'react-dom': '@hot-loader/react-dom',
-      '@': src,
-      '@components': resolve(src, './components')
+      '@components': resolve(src, './components'),
+      '@api': resolve(src, './api'),
+      '@pages': resolve(src, './pages'),
+      '@typings': resolve(src, './typings')
     }
   },
   module: {
@@ -66,11 +68,18 @@ const commonConfig: Configuration = {
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
-        loader: 'ts-loader'
+        options: { cacheDirectory: true },
+        loader: 'babel-loader'
       },
       {
         test: /\.css$/,
+        exclude: /node_modules/,
         use: getCssLoaders(1)
+      },
+      {
+        test: /\.css$/,
+        include: /node_modules/,
+        use: getCssLoaders(1, false)
       },
       {
         test: /\.less$/,
@@ -117,7 +126,7 @@ const commonConfig: Configuration = {
   },
   plugins: [
     new WebpackBar({
-      name: 'react-typescript-boilerplate',
+      name: '云联智慧运维管理模板',
       // react 蓝
       color: '#61dafb'
     }),
