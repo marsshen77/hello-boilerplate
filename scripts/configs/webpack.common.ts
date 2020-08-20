@@ -6,9 +6,9 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
 import { Options as HtmlMinifierOptions } from 'html-minifier';
 import { loader as MiniCssExtractLoader } from 'mini-css-extract-plugin';
-import { __DEV__, PROJECT_NAME, PROJECT_ROOT, HMR_PATH } from '../utils/constants';
+import { __DEV__, PROJECT_NAME, PROJECT_ROOT, HMR_PATH, PublicPath } from '../utils/constants';
 
-function getCssLoaders(importLoaders: number, module = true) {
+function getCssLoaders(importLoaders: number, module = false) {
   return [
     __DEV__ ? 'style-loader' : MiniCssExtractLoader,
     {
@@ -44,9 +44,9 @@ const htmlMinifyOptions: HtmlMinifierOptions = {
 
 const src = resolve(PROJECT_ROOT, './src');
 const commonConfig: Configuration = {
-  entry: ['react-hot-loader/patch', resolve(PROJECT_ROOT, './src/index.tsx')],
+  entry: __DEV__ ? ['react-hot-loader/patch', resolve(PROJECT_ROOT, './src/index.tsx')] : resolve(PROJECT_ROOT, './src/index.tsx'),
   output: {
-    publicPath: '/',
+    publicPath: PublicPath,
     path: resolve(PROJECT_ROOT, './dist'),
     filename: 'js/[name]-[hash].bundle.js',
     hashSalt: PROJECT_NAME
@@ -79,7 +79,7 @@ const commonConfig: Configuration = {
       {
         test: /\.css$/,
         include: /node_modules/,
-        use: getCssLoaders(1, false)
+        use: getCssLoaders(1)
       },
       {
         test: /\.less$/,

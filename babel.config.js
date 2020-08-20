@@ -29,8 +29,7 @@ module.exports = function (api) {
                 ]
             },
             production: {
-                presets: ['@babel/preset-react'],
-                plugins: ['@babel/plugin-transform-react-constant-elements']
+                presets: ['@babel/preset-react']
             }
         }
     };
