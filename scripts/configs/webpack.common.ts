@@ -44,7 +44,9 @@ const htmlMinifyOptions: HtmlMinifierOptions = {
 
 const src = resolve(PROJECT_ROOT, './src');
 const commonConfig: Configuration = {
-  entry: __DEV__ ? ['react-hot-loader/patch', resolve(PROJECT_ROOT, './src/index.tsx')] : resolve(PROJECT_ROOT, './src/index.tsx'),
+  entry: __DEV__
+    ? ['react-hot-loader/patch', resolve(PROJECT_ROOT, './src/index.tsx')]
+    : resolve(PROJECT_ROOT, './src/index.tsx'),
   output: {
     publicPath: PublicPath,
     path: resolve(PROJECT_ROOT, './dist'),
@@ -57,10 +59,9 @@ const commonConfig: Configuration = {
     alias: {
       // 替换 react-dom 成 @hot-loader/react-dom 以支持 react hooks 的 hot reload
       'react-dom': '@hot-loader/react-dom',
-      '@components': resolve(src, './components'),
-      '@api': resolve(src, './api'),
-      '@pages': resolve(src, './pages'),
-      '@typings': resolve(src, './typings')
+      // 解决react-hook-form在IE11中的兼容问题
+      'react-hook-form': 'react-hook-form/dist/index.ie11',
+      '@': src
     }
   },
   module: {
@@ -156,7 +157,7 @@ const commonConfig: Configuration = {
     new CopyPlugin([
       {
         context: resolve(PROJECT_ROOT, './public'),
-        from: '*',
+        from: '**/*',
         to: resolve(PROJECT_ROOT, './dist'),
         toType: 'dir',
         ignore: ['index.html']

@@ -1,0 +1,70 @@
+@import '~@/assets/less/library.less';
+.root-header {
+    display: flex;
+    justify-content: space-between;
+    height: @header-height;
+    background-color: rgba(0, 138, 183, 1);
+    background-image: url(./images/header-bg.png);
+    background-repeat: no-repeat;
+    background-position-x: right;
+    background-position-y: bottom;
+    .title-bg {
+        width: 660px;
+        height: @header-height;
+        font-weight: bold;
+        line-height: @header-height;
+        background-image: url(./images//title-bg.png);
+        > span {
+            margin-left: 37px;
+            color: transparent;
+            font-size: 34px;
+            font-family: Alibaba PuHuiTi;
+            background: linear-gradient(to top, rgba(177, 236, 255, 1) 0%, white 100%);
+            background-clip: text;
+            filter: drop-shadow(2px 1px rgba(0, 103, 136, 0.9));
+            user-select: none;
+        }
+    }
+    .menu-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 86px;
+        margin-right: 420px;
+        > hr {
+            width: 1px;
+            height: 14px;
+            margin: 0 2px;
+            background: #a3dfdc;
+            box-shadow: 1px 0 0 0 rgba(0, 161, 213, 0.55);
+        }
+        > span {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            width: 174px;
+            height: 100%;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            background-color: transparent;
+            cursor: pointer;
+            &.selected {
+                background: linear-gradient(
+                    0deg,
+                    rgba(142, 238, 255, 0.3) 0%,
+                    rgba(142, 238, 255, 0) 100%
+                );
+            }
+            .chinese {
+                font-size: 20px;
+                text-shadow: 0 1px 0 rgba(0, 161, 213, 0.75);
+            }
+            .english {
+                padding-bottom: 8px;
+                font-size: 14px;
+                font-style: italic;
+            }
+        }
+    }
+}

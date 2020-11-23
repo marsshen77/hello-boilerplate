@@ -1,0 +1,539 @@
+@import '~@/assets/less/library.less';
+.esri-blue-title {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 20px;
+    color: white;
+    background-color: rgba(51, 127, 229, 1);
+    > span {
+        flex-grow: 1;
+    }
+
+    .layer-icon {
+        width: 16px;
+        height: 14px;
+        margin-right: 8px;
+    }
+    .close-icon {
+        width: 14px;
+        height: 14px;
+        cursor: pointer;
+    }
+}
+.zoom-control-container {
+    position: absolute;
+    right: 42px;
+    bottom: 19px;
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    > span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        margin-bottom: 8px;
+        background-color: white;
+        box-shadow: 0 1px 4px 0 rgba(136, 136, 136, 0.25);
+        cursor: pointer;
+        > img {
+            width: 17px;
+            height: 17px;
+            &.basemap-icon {
+                width: 23px;
+                height: 23px;
+            }
+        }
+    }
+}
+.analysis-bar {
+    position: absolute;
+    top: 190px;
+    right: 34px;
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    width: 56px;
+    padding-top: 14px;
+    background-color: white;
+    box-shadow: 0 1px 4px 0 rgba(136, 136, 136, 0.25);
+    .item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 14px;
+        color: rgba(77, 77, 77, 1);
+        cursor: pointer;
+        &:hover,
+        &.selected {
+            color: rgba(51, 127, 229, 1);
+            > img {
+                &.buffer-ana {
+                    content: url(./images/huanchong-xz@2x.png);
+                }
+                &.rect-select {
+                    content: url(./images/kuangxuan-xz@2x.png);
+                }
+                &.multi-screen {
+                    content: url(./images/fenping-xz@2x.png);
+                }
+            }
+        }
+        > img {
+            width: 20px;
+            height: 20px;
+            &.buffer-ana {
+                content: url(./images/huanchong@2x.png);
+            }
+            &.rect-select {
+                content: url(./images/kuangxuan@2x.png);
+            }
+            &.multi-screen {
+                content: url(./images/fenping@2x.png);
+            }
+        }
+    }
+}
+.esri-toolbar {
+    position: absolute;
+    top: 20px;
+    right: 34px;
+    z-index: 99;
+    display: flex;
+    align-items: center;
+    height: 46px;
+    padding: 0 7px;
+    background-color: white;
+    box-shadow: 0 1px 4px 0 rgba(136, 136, 136, 0.25);
+    > hr {
+        width: 2px;
+        height: 30%;
+        &:last-child {
+            display: none;
+        }
+    }
+    .item {
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        cursor: pointer;
+        &:hover,
+        &.selected {
+            color: rgba(51, 127, 229, 1);
+            > img {
+                &.measure-line {
+                    content: url(./images/ceju-xz@2x.png);
+                }
+                &.measure-polygon {
+                    content: url(./images/mianji-xz@2x.png);
+                }
+                &.mark-point {
+                    content: url(./images/biaodian-xz@2x.png);
+                }
+                &.mark-line {
+                    content: url(./images/biaoxian-xz@2x.png);
+                }
+                &.mark-polygon {
+                    content: url(./images/biaomian-xz@2x.png);
+                }
+                &.layer-control {
+                    content: url(./images/tuceng-xz@2x.png);
+                }
+                &.clear {
+                    content: url(./images/qingkong-xz@2x.png);
+                }
+                &.buffer-ana {
+                    content: url(./images/huanchong-xz@2x.png);
+                }
+                &.rect-select {
+                    content: url(./images/kuangxuan-xz@2x.png);
+                }
+                &.multi-screen {
+                    content: url(./images/fenping-xz@2x.png);
+                }
+            }
+        }
+        > img {
+            width: 20px;
+            height: 20px;
+            margin-right: 4px;
+            &.measure-line {
+                content: url(./images/ceju@2x.png);
+            }
+            &.measure-polygon {
+                content: url(./images/mianji@2x.png);
+            }
+            &.mark-point {
+                content: url(./images/biaodian@2x.png);
+            }
+            &.mark-line {
+                content: url(./images/biaoxian@2x.png);
+            }
+            &.mark-polygon {
+                content: url(./images/biaomian@2x.png);
+            }
+            &.layer-control {
+                content: url(./images/tuceng@2x.png);
+            }
+            &.clear {
+                content: url(./images/qingkong@2x.png);
+            }
+            &.buffer-ana {
+                content: url(./images/huanchong@2x.png);
+            }
+            &.rect-select {
+                content: url(./images/kuangxuan@2x.png);
+            }
+            &.multi-screen {
+                content: url(./images/fenping@2x.png);
+            }
+        }
+    }
+    .name {
+        color: rgba(77, 77, 77, 1);
+    }
+}
+
+.desktop-layer-control {
+    position: absolute;
+    top: 100px;
+    right: 110px;
+    z-index: 99;
+    width: 250px;
+    height: 625px;
+    background-color: white;
+    box-shadow: 0 2px 8px 0 rgba(136, 136, 136, 0.25);
+    > .content {
+        max-height: 530px;
+        padding: 17px 17px 7px 17px;
+        overflow-y: auto;
+        .thin-scroll-bar;
+        > ul {
+            margin: 0;
+            padding: 0;
+            > li {
+                .checked {
+                    color: rgba(33, 161, 33, 1);
+                }
+                > .label {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    padding-bottom: 10px;
+                    overflow: hidden;
+                    color: black;
+                    cursor: pointer;
+                    > img {
+                        margin-left: auto;
+                        transform: rotate(-90deg);
+                        &.show {
+                            transform: rotate(0deg);
+                        }
+                    }
+                    &:hover {
+                        .more-actions {
+                            display: flex;
+                            align-items: center;
+                        }
+                    }
+                    .more-actions {
+                        position: absolute;
+                        bottom: 0;
+                        left: 38px;
+                        display: none;
+                        height: 20px;
+                        > span {
+                            display: block;
+                            width: 4px;
+                            height: 4px;
+                            margin-left: 3px;
+                            background-color: #888b8d;
+                        }
+                    }
+                }
+                list-style: none;
+                ul {
+                    margin: 0 0 0 30px;
+                    padding: 0;
+                    > li {
+                        color: rgba(105, 105, 105, 1);
+                        list-style: none;
+                        .MuiFormControlLabel-label {
+                            font-family: Alibaba PuHuiTi Regular;
+                        }
+                        .checked {
+                            color: rgba(33, 161, 33, 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .add-button {
+        margin-top: 5px;
+        text-align: center;
+        button {
+            color: #337fe5;
+            background-color: #e9f5ff;
+            border-radius: 2px;
+        }
+    }
+}
+.layer-control-management-btn {
+    box-shadow: 0 1px 4px 0 rgba(136, 136, 136, 0.25) !important;
+    transform: translateY(10px) !important;
+    > div {
+        button {
+            display: block;
+        }
+    }
+}
+
+.basemap-select-container {
+    box-shadow: 0 1px 4px 0 rgba(136, 136, 136, 0.25) !important;
+    transform: translateX(-10px) !important;
+    > div {
+        display: flex;
+        padding: 10px;
+        > img {
+            display: block;
+            width: 86px;
+            height: 60px;
+            margin-right: 10px;
+            overflow: hidden;
+            border: 1px solid transparent;
+            cursor: pointer;
+            &:last-child {
+                margin-right: 0;
+            }
+            &.selected {
+                border: 1px solid #337fe5;
+                border-radius: 2px;
+            }
+        }
+    }
+}
+.layer-control-add-form {
+    .custom-input-container {
+        display: block;
+    }
+    .buttons {
+        text-align: center;
+        > button {
+            margin: 0 10px;
+        }
+    }
+}
+
+.layer-actions-container {
+    > ul {
+        margin: 0;
+        padding: 0;
+        > li {
+            list-style: none;
+        }
+    }
+}
+
+.custom-esri-legend {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    z-index: 99;
+    width: 250px;
+    background-color: white;
+    box-shadow: 0 2px 8px 0 rgba(136, 136, 136, 0.25);
+
+    > .content {
+        max-height: 400px;
+        overflow: auto;
+        .thin-scroll-bar;
+        > section {
+            > h3 {
+                margin: 0;
+                padding: 10px;
+                color: rgba(26, 26, 26, 1);
+                font-weight: normal;
+                font-size: 16px;
+                background-color: rgba(250, 250, 250, 1);
+                border-bottom: 1px solid #e4e5e6;
+            }
+            > section {
+                padding-bottom: 10px;
+                padding-left: 25px;
+                h4 {
+                    position: relative;
+                    margin: 0;
+                    padding: 10px 0 5px 0;
+                    color: #666;
+                    font-weight: normal;
+                    font-size: 16px;
+                    &::before {
+                        position: absolute;
+                        top: 20px;
+                        left: -10px;
+                        width: 4px;
+                        height: 4px;
+                        background-color: rgba(51, 127, 229, 1);
+                        content: '';
+                    }
+                }
+                ul {
+                    margin: 0;
+                    padding: 0;
+                    li {
+                        display: flex;
+                        align-items: center;
+                        list-style: none;
+                        > img {
+                            max-height: 20px !important;
+                            object-fit: contain;
+                        }
+                        > span {
+                            margin-left: 5px;
+                            color: rgba(77, 77, 77, 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+.buffer-ana-container {
+    position: absolute;
+    top: 100px;
+    right: 382px;
+    z-index: 99;
+    width: 300px;
+    background-color: white;
+    box-shadow: 0 2px 8px 0 rgba(136, 136, 136, 0.25);
+    .buffer-ana-params {
+        > .content {
+            padding: 8px;
+            form {
+                .buttons {
+                    margin-bottom: 10px;
+                    text-align: center;
+                }
+            }
+        }
+    }
+    .buffer-ana-result {
+        .content {
+            padding: 0 10px 10px 10px;
+            .global-pagination-ul {
+                .MuiPaginationItem-root {
+                    width: 32px;
+                    height: 32px;
+                }
+            }
+        }
+    }
+}
+.rect-select-container {
+    position: absolute;
+    top: 71px;
+    left: 26px;
+    z-index: 99;
+    width: 372px;
+    background-color: white;
+    box-shadow: 0 2px 8px 0 rgba(136, 136, 136, 0.25);
+    .rect-select-params {
+        > .content {
+            padding: 8px;
+            form {
+                .buttons {
+                    margin-bottom: 10px;
+                    text-align: center;
+                }
+            }
+        }
+    }
+    .rect-select-result {
+        .content {
+            padding: 0 10px 10px 10px;
+            .global-pagination-ul {
+                .MuiPaginationItem-root {
+                    width: 32px;
+                    height: 32px;
+                }
+            }
+        }
+    }
+}
+.query-total-count {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: rgba(239, 241, 245, 1);
+    > span {
+        color: rgba(153, 153, 153, 1);
+        font-size: 14px;
+    }
+}
+
+.query-result-table {
+    thead {
+        background: white;
+        th {
+            padding: 7px;
+            color: rgba(64, 64, 64, 1);
+            font-weight: bold;
+            font-family: 'Alibaba PuHuiTi Regular';
+            text-align: center;
+            border: none;
+            .cell-item {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                > span {
+                    margin: 0 3px;
+                }
+                cursor: pointer;
+            }
+        }
+    }
+    tbody {
+        tr {
+            &:nth-child(1n) {
+                background-color: rgba(239, 241, 245, 1);
+            }
+            &:nth-child(2n) {
+                background-color: white;
+            }
+            td {
+                padding: 7px;
+                color: rgba(64, 77, 97, 1);
+                font-size: 14px;
+                font-family: 'Alibaba PuHuiTi Regular';
+                text-align: center;
+                border: none;
+            }
+        }
+    }
+}
+
+.multi-map-container {
+    position: absolute;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    .back-btn {
+        position: absolute;
+        top: 28px;
+        right: 26px;
+        z-index: 999;
+        padding: 3px 10px;
+        background: white;
+        img {
+            width: 14px;
+        }
+    }
+    .map-target {
+        flex-grow: 1;
+        height: 100%;
+    }
+}

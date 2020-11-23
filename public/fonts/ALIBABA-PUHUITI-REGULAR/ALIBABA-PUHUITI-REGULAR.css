@@ -1,0 +1,12 @@
+@charset "UTF-8";
+
+@font-face {
+  font-weight: normal;
+  font-family: "Alibaba PuHuiTi Regular";
+  font-style: normal;
+  src: url("ALIBABA-PUHUITI-REGULAR.woff2") format("woff2"),
+       url("ALIBABA-PUHUITI-REGULAR.woff") format("woff"),
+       url("ALIBABA-PUHUITI-REGULAR.ttf") format("truetype"),
+       url("ALIBABA-PUHUITI-REGULAR.eot") format("embedded-opentype"),
+       url("ALIBABA-PUHUITI-REGULAR.svg") format("svg");
+}

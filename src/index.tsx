@@ -1,9 +1,14 @@
-import ReactDOM from 'react-dom';
-import React from 'react';
-import Hello from '@pages/Hello';
-
 import './global.less';
 
-ReactDOM.render(<Hello data="React" />, document.getElementById('root'));
+import ReactDOM from 'react-dom';
+import React from 'react';
+import App from './app';
+import { setDefaultOptions } from 'esri-loader';
 
+setDefaultOptions(sspConfig.ESRI_ROOT);
 
+const render = () => {
+    ReactDOM.render(<App />, document.getElementById('root'));
+};
+
+render();
