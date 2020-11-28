@@ -1,6 +1,65 @@
 .cloud-container {
+    position: relative;
     height: 100%;
     .map-container {
         height: 100%;
+
+        .esri-popup {
+            outline: none;
+            box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.5);
+            .esri-widget {
+                width: auto;
+                max-width: 500px;
+                outline: none;
+                .esri-popup__header {
+                    background-color: #f5f7fa;
+                    border-bottom: 1px solid #e1e3e5;
+                    .esri-popup__header-container {
+                        outline: none;
+                        .esri-popup__header-title {
+                            color: rgba(0, 88, 255, 1);
+                            font-weight: normal;
+                            font-size: 16px;
+                            font-family: Alibaba PuHuiTi Regular;
+                            &:hover {
+                                background-color: transparent;
+                            }
+                        }
+                    }
+                    .esri-popup__header-buttons {
+                        .esri-popup__button {
+                            outline: none;
+                            .esri-icon-close {
+                                &::before {
+                                    color: #cbd0d5;
+                                }
+                            }
+                        }
+                    }
+                }
+                .esri-popup__content {
+                    margin: 0;
+                    padding: 15px;
+                    .custom-popup-content {
+                        font-size: 14px;
+                        font-family: Microsoft YaHei;
+                        > div {
+                            margin-bottom: 10px;
+                            .name {
+                                color: rgba(102, 102, 102, 1);
+                            }
+                            .value {
+                                color: rgba(51, 51, 51, 1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .esri-popup__pointer {
+            .esri-popup__pointer-direction {
+                transform: scale(1, 1) rotate(45deg);
+            }
+        }
     }
 }

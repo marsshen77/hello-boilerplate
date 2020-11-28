@@ -4,25 +4,126 @@ import collapse_icon from './images/collapse.png';
 import close_icon from './images/guanbi@2x.png';
 
 import { EsriMap } from '@/typings/esri';
-import { AddMyDesktopResParams, MyDesktopLayer, MyDesktopResModel } from '@/typings/resource';
-import { Button, Checkbox, Collapse, FormControlLabel, MenuItem, Popover } from '@material-ui/core';
-import { CheckBoxOutlined, RemoveCircle } from '@material-ui/icons';
-import { useRequest } from 'ahooks';
+import { Checkbox, Collapse, FormControlLabel } from '@material-ui/core';
+import { CheckBoxOutlined } from '@material-ui/icons';
 import { loadModules } from 'esri-loader';
 import React, { useRef, useState } from 'react';
-import { LegendServer } from './legend';
+import { LegendServer } from './Legend';
 
-const LayerData = [
+interface LayerInfo {
+    title: string;
+    url: string;
+    tch: number;
+    id: string;
+    cluster?: boolean;
+    fields?: [string, string][];
+}
+interface LayerGroup {
+    title: string;
+    layers?: LayerInfo[];
+}
+const LayerData: LayerGroup[] = [
     {
         title: '专题图层',
         layers: [
             {
                 title: '企业法人',
-                url: 'FRKDZ/MapServer/0'
+                url: 'FRKDZ/MapServer',
+                tch: 0,
+                id: '1',
+                cluster: true
             },
             {
                 title: '特种设备',
-                url: 'TZSB/MapServer/0'
+                url: 'TZSB/MapServer',
+                tch: 0,
+                id: '2',
+                cluster: true
+            }
+        ]
+    },
+    {
+        title: '应急资源',
+        layers: [
+            {
+                title: '救援队伍',
+                url: 'SJGIS_YJZY/MapServer',
+                tch: 0,
+                id: '3',
+                fields: [
+                    ['名称', 'TEAMNAME'],
+                    ['联系人', 'CONTACTPER'],
+                    ['办公电话', 'CONTACTOTEL'],
+                    ['所属单位', 'CHARGEDEPT'],
+                    ['地址', 'ADDRESS']
+                ]
+            },
+            {
+                title: '避难场所',
+                url: 'SJGIS_YJZY/MapServer',
+                tch: 1,
+                id: '4',
+                fields: [
+                    ['名称', 'ASYLUMAREANAME'],
+                    ['联系人', 'CONTACTPER'],
+                    ['办公电话', 'CONTACTOTEL'],
+                    ['所属单位', 'CHARGEDEPT'],
+                    ['地址', 'ADDRESS']
+                ]
+            },
+            {
+                title: '防护目标',
+                url: 'SJGIS_YJZY/MapServer',
+                tch: 2,
+                id: '5',
+                cluster: true,
+                fields: [
+                    ['名称', 'DEFOBJNAME'],
+                    ['联系人', 'CONTACTPER'],
+                    ['办公电话', 'CONTACTOTEL'],
+                    ['所属单位', 'CHARGEDEPT'],
+                    ['地址', 'ADDRESS']
+                ]
+            },
+            {
+                title: '消防单位',
+                url: 'SJGIS_YJZY/MapServer',
+                tch: 3,
+                id: '6',
+                fields: [
+                    ['名称', 'TEAMNAME'],
+                    ['联系人', 'CONTACTPER'],
+                    ['办公电话', 'CONTACTOTEL'],
+                    ['所属单位', 'CHARGEDEPT'],
+                    ['地址', 'ADDRESS']
+                ]
+            },
+            {
+                title: '消防设施',
+                url: 'SJGIS_YJZY/MapServer',
+                tch: 4,
+                id: '7',
+                cluster: true,
+                fields: [
+                    ['名称', 'DEFOBJNAME'],
+                    ['联系人', 'CONTACTPER'],
+                    ['办公电话', 'CONTACTOTEL'],
+                    ['所属单位', 'CHARGEDEPT'],
+                    ['地址', 'ADDRESS']
+                ]
+            },
+            {
+                title: '医疗卫生',
+                url: 'SJGIS_YJZY/MapServer',
+                tch: 5,
+                id: '8',
+                fields: [
+                    ['名称', 'HEALTHNAME'],
+                    ['联系人', 'CONTACTPER'],
+                    ['办公电话', 'CONTACTOTEL'],
+                    ['所属单位', 'CHARGEDEPT'],
+                    ['地址', 'ADDRESS']
+                ]
             }
         ]
     },
@@ -33,13 +134,13 @@ interface LayerControlProps {
     map?: EsriMap;
     show?: boolean;
     onClose?: () => void;
-    token: string;
     onServerChange?: (servers: LegendServer[]) => void;
+    prefix: string;
 }
-export const LayerControl = (props: LayerControlProps) => {
-    const { show = true, onClose, map, token, onServerChange } = props;
+const LayerControl = (props: LayerControlProps) => {
+    const { show = true, onClose, map, onServerChange, prefix } = props;
     const serverVisible = useRef<LegendServer[]>([]);
-    if (!token) return null;
+    if (!prefix) return null;
     const handleVisibleChange = (server: LegendServer) => {
         const index = serverVisible.current.findIndex((item) => item.id === server.id);
         if (~index) {
@@ -55,11 +156,12 @@ export const LayerControl = (props: LayerControlProps) => {
                 <LayerItem
                     key={item.title}
                     onVisibleChange={handleVisibleChange}
-                    token={token}
                     data={item}
                     map={map}
+                    prefix={prefix}
                 />
             ));
+        return null;
     };
     return (
         <div className="desktop-layer-control" style={{ display: show ? 'block' : 'none' }}>
@@ -80,90 +182,102 @@ export const LayerControl = (props: LayerControlProps) => {
     );
 };
 type LayerControlEsriModels = [typeof import('esri/layers/FeatureLayer')];
-type ServerControlEsriModels = [
-    typeof import('esri/layers/TileLayer'),
-    typeof import('esri/layers/MapImageLayer')
-];
 interface LayerItemProps {
-    token?: string;
-    data: MyDesktopResModel;
+    data: LayerGroup;
     map: EsriMap;
     onVisibleChange: (server: LegendServer) => void;
+    prefix: string;
 }
 const LayerItem = (props: LayerItemProps) => {
-    const { data, map, token, onVisibleChange } = props;
-    const serverUrl = `${sspConfig.MAP_ROOT}/${token}/${data.dz}`;
+    const { data, map, prefix } = props;
     const [show, setShow] = useState(false);
+    const [subCheck, setSubCheck] = useState<boolean[]>(
+        data.layers ? data.layers.map((_) => false) : [false]
+    );
 
-    const handleChange = (index: number, checked: boolean, layerInfo: MyDesktopLayer) => {
-        if (map && token) {
+    const handleChange = (index: number, checked: boolean, layerInfo: LayerInfo) => {
+        if (map && prefix) {
             const temp = [...subCheck];
             temp[index] = checked;
+            setSubCheck(temp);
             setLayerVisible(layerInfo, checked);
-            onVisibleChange({
-                id: data.id,
-                name: data.mc,
-                url: serverUrl,
-                visible: temp.reduce((check, item) => check || item, false),
-                layers: data.tc
-                    ? data.tc.map((item, index) => ({
-                          tch: Number(item.tch),
-                          visible: temp[index]
-                      }))
-                    : []
-            });
-        }
-    };
-    const handleTotalChange = (checked: boolean) => {
-        if (map && token) {
-            if (data.tc) {
-                const temp = data.tc.map((_) => checked);
-                data.tc.forEach((layerInfo) => {
-                    setLayerVisible(layerInfo, checked);
-                });
-                onVisibleChange({
-                    id: data.id,
-                    name: data.mc,
-                    url: serverUrl,
-                    visible: checked,
-                    layers: data.tc
-                        ? data.tc.map((item) => ({ tch: Number(item.tch), visible: checked }))
-                        : []
-                });
-            } else {
-                setMapServerVisible(checked);
-                onVisibleChange({
-                    id: data.id,
-                    name: data.mc,
-                    url: serverUrl,
-                    visible: checked,
-                    layers: []
-                });
-            }
         }
     };
 
-    const setLayerVisible = async (layerInfo: MyDesktopLayer, checked: boolean) => {
+    const setLayerVisible = async (layerInfo: LayerInfo, checked: boolean) => {
         let layer = map.findLayerById(layerInfo.id);
         if (layer) {
             layer.visible = checked;
         } else {
-            const fields = (await runField(layerInfo.id)).data;
+            const fields = layerInfo.fields;
             const [FeatureLayer] = await (loadModules([
                 'esri/layers/FeatureLayer'
             ]) as Promise<LayerControlEsriModels>);
-            let url = `${serverUrl}/${layerInfo.tch}`;
+            let url = `${prefix}/${layerInfo.url}/${layerInfo.tch}`;
             const featureLayer = new FeatureLayer({ url, id: layerInfo.id });
+            if (layerInfo.cluster) {
+                const clusterConfig = {
+                    type: 'cluster',
+                    clusterRadius: '400px',
+                    // {cluster_count} is an aggregate field containing
+                    // the number of features comprised by the cluster
+                    popupTemplate: {
+                        content: 'This cluster represents {cluster_count} earthquakes.',
+                        fieldInfos: [
+                            {
+                                fieldName: 'cluster_count',
+                                format: {
+                                    places: 0,
+                                    digitSeparator: true
+                                }
+                            }
+                        ]
+                    },
+                    clusterMinSize: '24px',
+                    clusterMaxSize: '60px',
+                    labelingInfo: [
+                        {
+                            deconflictionStrategy: 'none',
+                            labelExpressionInfo: {
+                                expression: "Text($feature.cluster_count, '#,###')"
+                            },
+                            symbol: {
+                                type: 'text',
+                                color: '#0b4000',
+                                font: {
+                                    weight: 'bold',
+                                    family: 'Noto Sans',
+                                    size: '14px'
+                                },
+                                haloColor: 'white',
+                                haloSize: '1px'
+                            },
+                            labelPlacement: 'center-center'
+                        }
+                    ]
+                };
+                featureLayer.featureReduction = (clusterConfig as unknown) as __esri.FeatureReductionCluster;
+                featureLayer.renderer = ({
+                    type: 'simple',
+                    field: 'mag',
+                    symbol: {
+                        type: 'simple-marker',
+                        size: 10,
+                        color: 'rgba(29,174,0,0.3)',
+                        outline: {
+                            color: 'rgba(29,174,0,0.15)',
+                            width: 10
+                        }
+                    }
+                } as unknown) as __esri.Renderer;
+            }
             if (fields && fields.length > 0)
                 featureLayer.popupTemplate = {
-                    title: `{${fields[0].mc}}`,
+                    title: layerInfo.title,
                     content: `<div class="custom-popup-content">${fields
-                        .slice(1)
                         .map(
                             (item) =>
-                                `<div><span class="name">${item.bm}：</span><span class="value">{${
-                                    item.mc
-                                }}${item.hz || ''}</span></div>`
+                                `<div><span class="name">${item[0]}：</span><span class="value">{${item[1]}}</span></div>`
                         )
                         .join('')}</div>`
                 } as __esri.PopupTemplate;
@@ -171,40 +285,20 @@ const LayerItem = (props: LayerItemProps) => {
             if (featureLayer) map.add(featureLayer);
         }
     };
-    const setMapServerVisible = async (checked: boolean) => {
-        let layer = map.findLayerById(data.id);
-        if (layer) {
-            layer.visible = checked;
-        } else {
-            const [TileLayer, MapImageLayer] = await (loadModules([
-                'esri/layers/TileLayer',
-                'esri/layers/MapImageLayer'
-            ]) as Promise<ServerControlEsriModels>);
-            let url = serverUrl;
-            if (data.lx === 'MapServer') {
-                const imageLayer = new MapImageLayer({ url, id: data.id });
-                map.add(imageLayer);
-            }
-            if (data.lx === 'Tile') {
-                const tileLayer = new TileLayer({ url, id: data.id });
-                map.add(tileLayer);
-            }
-        }
-    };
+
     return (
         <li>
             <div className="label">
-                <span onClick={() => data.tc && setShow(!show)}>{data.mc}</span>
-                {data.tc && <img className={show ? 'show' : ''} src={collapse_icon} alt="" />}
+                <span onClick={() => data.layers && setShow(!show)}>{data.title}</span>
+                {data.layers && <img className={show ? 'show' : ''} src={collapse_icon} alt="" />}
             </div>
             <Collapse in={show}>
                 <ul>
-                    {data.tc?.map((layer, index) => (
-                        <li key={layer.tch}>
+                    {data.layers?.map((layer, index) => (
+                        <li key={layer.url + layer.tch}>
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={subCheck[index]}
                                         onChange={(_, checked) =>
                                             handleChange(index, checked, layer)
                                         }
@@ -214,7 +308,7 @@ const LayerItem = (props: LayerItemProps) => {
                                         color="primary"
                                     />
                                 }
-                                label={layer.mc}
+                                label={layer.title}
                             />
                         </li>
                     ))}
@@ -223,3 +317,5 @@ const LayerItem = (props: LayerItemProps) => {
         </li>
     );
 };
+
+export default LayerControl;

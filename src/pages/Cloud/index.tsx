@@ -5,7 +5,11 @@ import { PROXY_URL } from '@/config';
 import { useRequest } from 'ahooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { loadModules } from 'esri-loader';
-import { ZoomControl } from '@/components/EsriTools/zoom';
+import { ZoomControl } from '@/components/EsriTools/Zoom';
+import LayerControl from '@/components/EsriTools/LayerControl';
+import SearchAddress from '@/components/EsriTools/SearchAddress';
+import CustomInput from '@/components/CustomInput';
+import EnterpriseSearch from '@/components/EsriTools/EnterpriseSearch';
 
 type EsriModels = [
     typeof import('esri/Map'),
@@ -60,7 +64,10 @@ const Cloud = () => {
     return (
         <div className="cloud-container">
             <div className="map-container" ref={target}></div>
+            <SearchAddress map={map} view={view} />
             <ZoomControl view={view} map={map} prefix={prefix} />
+            <LayerControl prefix={prefix} map={map} />
+            <EnterpriseSearch map={map} view={view} prefix={prefix} />
         </div>
     );
 };

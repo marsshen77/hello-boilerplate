@@ -1,0 +1,101 @@
+.custom-input-container {
+    display: inline-block;
+    > .content {
+        display: flex;
+        min-height: 36px;
+        color: rgba(70, 82, 102, 1);
+        border: 1px solid #dfe6f4;
+        > .custom-label {
+            position: relative;
+            display: inline-block;
+            padding: 0 18px;
+            line-height: 34px;
+            background-color: rgba(231, 235, 243, 1);
+            border-right: 1px solid #e7ebf3;
+            &.is-required {
+                &::before {
+                    position: absolute;
+                    left: 7px;
+                    color: #f44336;
+                    line-height: 42px;
+                    content: '*';
+                }
+            }
+        }
+        > .custom-input {
+            display: inline-flex;
+            flex-grow: 1;
+            align-items: center;
+            overflow: hidden;
+            color: rgba(70, 82, 101, 1);
+            .form-select {
+                font-size: 16px;
+            }
+            > div {
+                width: 100%;
+            }
+            > .MuiFormGroup-root {
+                > label {
+                    margin-right: 0;
+                    margin-left: 0;
+                    > span {
+                        padding: 5px;
+                    }
+                }
+            }
+            .MuiInputBase-root {
+                > input,
+                textarea {
+                    padding: 0 10px;
+                    color: rgba(70, 82, 101, 1) !important;
+                }
+                &::before {
+                    content: none;
+                }
+                &::after {
+                    content: none;
+                }
+            }
+            > .MuiButtonBase-root {
+                padding: 10px 5px 10px 10px;
+                font-size: 14px;
+                .MuiIconButton-label {
+                    .MuiSvgIcon-root {
+                        font-size: 14px;
+                    }
+                }
+            }
+            .MuiFormControl-root {
+                > [class*='WAMuiChipInput'] {
+                    padding-left: 10px;
+                }
+                > div {
+                    .MuiButtonBase-root {
+                        height: 24px;
+                        margin: 3px;
+                        .MuiChip-label {
+                            padding-right: 7px;
+                            padding-left: 7px;
+                        }
+                        .MuiChip-deleteIcon {
+                            width: 16px;
+                            height: 16px;
+                        }
+                    }
+                    min-height: auto;
+                    &::before {
+                        content: none;
+                    }
+                    &::after {
+                        content: none;
+                    }
+                }
+            }
+        }
+    }
+    > .error-message {
+        height: 22px;
+        color: #f44336;
+        font-size: 14px;
+    }
+}
