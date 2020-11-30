@@ -9,6 +9,9 @@ import { CheckBoxOutlined } from '@material-ui/icons';
 import { loadModules } from 'esri-loader';
 import React, { useRef, useState } from 'react';
 import { LegendServer } from './Legend';
+import { getBasicInfo } from '@/api/resource';
+import { useRequest } from 'ahooks';
+import { ThirdResultData } from '@/typings/resource';
 
 interface LayerInfo {
     title: string;
@@ -17,6 +20,7 @@ interface LayerInfo {
     id: string;
     cluster?: boolean;
     fields?: [string, string][];
+    promisePopup?: boolean;
 }
 interface LayerGroup {
     title: string;
@@ -27,18 +31,12 @@ const LayerData: LayerGroup[] = [
         title: '专题图层',
         layers: [
             {
-                title: '企业法人',
-                url: 'FRKDZ/MapServer',
-                tch: 0,
-                id: '1',
-                cluster: true
-            },
-            {
                 title: '特种设备',
                 url: 'TZSB/MapServer',
                 tch: 0,
                 id: '2',
-                cluster: true
+                cluster: true,
+                promisePopup: true
             }
         ]
     },
@@ -194,6 +192,7 @@ const LayerItem = (props: LayerItemProps) => {
     const [subCheck, setSubCheck] = useState<boolean[]>(
         data.layers ? data.layers.map((_) => false) : [false]
     );
+    const { run: runInfo } = useRequest(getBasicInfo, { manual: true });
 
     const handleChange = (index: number, checked: boolean, layerInfo: LayerInfo) => {
         if (map && prefix) {
@@ -201,6 +200,29 @@ const LayerItem = (props: LayerItemProps) => {
             temp[index] = checked;
             setSubCheck(temp);
             setLayerVisible(layerInfo, checked);
+        }
+    };
+
+    const getPromiseContent = async (target: any) => {
+        console.log(target);
+        const body = {
+            username: 'test',
+            password: 'test',
+            reg_no: '',
+            device_id: '1911111738004142',
+            data_type: '特种设备-设备'
+        };
+        const result = await runInfo(body);
+        if (result.msg.code === '0') {
+            const data = result.data as ThirdResultData;
+            return `<div class="custom-popup-content">${Object.keys(result.data)
+                .map(
+                    (item) =>
+                        `<div><span class="name">${item}：</span><span class="value">${data[item]}</span></div>`
+                )
+                .join('')}</div>`;
+        } else {
+            return `<div class="custom-popup-content">信息未找到</div>`;
         }
     };
 
@@ -219,20 +241,6 @@ const LayerItem = (props: LayerItemProps) => {
                 const clusterConfig = {
                     type: 'cluster',
                     clusterRadius: '400px',
-                    // {cluster_count} is an aggregate field containing
-                    // the number of features comprised by the cluster
-                    popupTemplate: {
-                        content: 'This cluster represents {cluster_count} earthquakes.',
-                        fieldInfos: [
-                            {
-                                fieldName: 'cluster_count',
-                                format: {
-                                    places: 0,
-                                    digitSeparator: true
-                                }
-                            }
-                        ]
-                    },
                     clusterMinSize: '24px',
                     clusterMaxSize: '60px',
                     labelingInfo: [
@@ -281,6 +289,12 @@ const LayerItem = (props: LayerItemProps) => {
                         )
                         .join('')}</div>`
                 } as __esri.PopupTemplate;
+
+            if (layerInfo.promisePopup)
+                featureLayer.popupTemplate = ({
+                    title: layerInfo.title,
+                    content: getPromiseContent
+                } as unknown) as __esri.PopupTemplate;
 
             if (featureLayer) map.add(featureLayer);
         }

@@ -8,8 +8,8 @@ import { loadModules } from 'esri-loader';
 import { ZoomControl } from '@/components/EsriTools/Zoom';
 import LayerControl from '@/components/EsriTools/LayerControl';
 import SearchAddress from '@/components/EsriTools/SearchAddress';
-import CustomInput from '@/components/CustomInput';
 import EnterpriseSearch from '@/components/EsriTools/EnterpriseSearch';
+import { Toolbar } from '@/components/EsriTools';
 
 type EsriModels = [
     typeof import('esri/Map'),
@@ -21,6 +21,7 @@ type EsriModels = [
 const Cloud = () => {
     const [prefix, setPrefix] = useState<string>('');
     const [map, setMap] = useState<import('esri/Map')>();
+    const [showLayer, setShowLayer] = useState(true);
     const [view, setView] = useState<import('esri/views/MapView')>();
     const { run: configRun } = useRequest(getResPrefix, { manual: true });
     useEffect(() => {
@@ -64,9 +65,20 @@ const Cloud = () => {
     return (
         <div className="cloud-container">
             <div className="map-container" ref={target}></div>
+            <Toolbar
+                view={view}
+                map={map}
+                onLayerVisibleChange={(show) => setShowLayer(show)}
+                layerVisible={showLayer}
+            />
             <SearchAddress map={map} view={view} />
             <ZoomControl view={view} map={map} prefix={prefix} />
-            <LayerControl prefix={prefix} map={map} />
+            <LayerControl
+                prefix={prefix}
+                map={map}
+                show={showLayer}
+                onClose={() => setShowLayer(false)}
+            />
             <EnterpriseSearch map={map} view={view} prefix={prefix} />
         </div>
     );

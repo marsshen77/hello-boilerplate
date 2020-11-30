@@ -75,6 +75,35 @@ const sspFetch = async <T>(props: sspFetchProps): Promise<Result<T>> => {
 };
 
 /**
+ * 三方接口
+ * @param url 请求路径
+ * @param type 请求类型
+ * @param data 请求body
+ */
+export const thirdFetch = async <T, U = {}>(url: string, type = 'GET', data?: U): Promise<T> => {
+    try {
+        // let headers: HeadersInit = { 'content-type': 'application/json' };
+        const resp = await fetch(url, {
+            body: JSON.stringify(data),
+            // headers,
+            method: type
+        });
+        if (!resp.ok) {
+            const error = {
+                code: resp.status,
+                message: resp.statusText
+            };
+            throw error;
+        } else {
+            const json: T = await resp.json();
+            return json;
+        }
+    } catch (error) {
+        return Promise.reject(error);
+    }
+};
+
+/**
  * jsonp fetch
  * @param url 地址，jsonp仅支持get请求
  */

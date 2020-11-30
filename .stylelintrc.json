@@ -12,7 +12,8 @@
     "function-name-case": "lower",
     "no-descending-specificity": null,
     "no-invalid-double-slash-comments": null,
-    "font-family-no-missing-generic-family-keyword": null
+    "font-family-no-missing-generic-family-keyword": null,
+    "value-keyword-case": null
   },
   "ignoreFiles": ["node_modules/**", "dist/**/*", "**/typings/**/*"]
 }

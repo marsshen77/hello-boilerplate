@@ -1,6 +1,11 @@
 import { LegendModel } from '@/typings/esri';
-import { AddressListModel } from '@/typings/resource';
-import sspFetch, { jsonpFetch } from './fetch';
+import {
+    AddressListModel,
+    MetaBaseModel,
+    ThirdFetchParams,
+    ThirdFetchResult
+} from '@/typings/resource';
+import sspFetch, { jsonpFetch, thirdFetch } from './fetch';
 const path = `${sspConfig.API_ROOT}/resource/`;
 
 /**
@@ -20,3 +25,26 @@ export const getArcgisLegend = (url: string) => jsonpFetch<LegendModel>(url + '/
  */
 export const searchAddress = (keyword: string) =>
     sspFetch<AddressListModel[]>({ url: `${path}searchAddress?keyword=${keyword}` });
+
+/**
+ * 获取基本信息
+ * @param data
+ */
+export const getBasicInfo = (data: ThirdFetchParams) =>
+    thirdFetch<ThirdFetchResult>('http://www.hyidata.com:8086/getData', 'POST', data);
+
+/**
+ * 获取国民经济分类
+ * @param parentCode
+ */
+export const getIndustryList = (parentCode: string) =>
+    sspFetch<MetaBaseModel[]>({ url: `${path}getIndustryList?parentCode=${parentCode}` });
+
+/**
+ * 获取字典列表
+ * @param parentCode
+ */
+export const getMetaBaseList = (category: string, parentCode: string) =>
+    sspFetch<MetaBaseModel[]>({
+        url: `${path}getMetaBaseList?category=${category}&parentCode=${parentCode}`
+    });

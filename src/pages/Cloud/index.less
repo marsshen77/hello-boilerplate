@@ -1,3 +1,5 @@
+@import '~@/assets/less/library.less';
+@table-radius: 4px;
 .cloud-container {
     position: relative;
     height: 100%;
@@ -40,16 +42,89 @@
                 .esri-popup__content {
                     margin: 0;
                     padding: 15px;
+                    .thin-scroll-bar;
                     .custom-popup-content {
                         font-size: 14px;
                         font-family: Microsoft YaHei;
-                        > div {
-                            margin-bottom: 10px;
-                            .name {
-                                color: rgba(102, 102, 102, 1);
-                            }
-                            .value {
-                                color: rgba(51, 51, 51, 1);
+                        .panels {
+                            > .panel {
+                                margin-bottom: 15px;
+                                overflow: auto;
+                                .thin-scroll-bar;
+                                > div {
+                                    margin-bottom: 10px;
+                                    .name {
+                                        color: rgba(102, 102, 102, 1);
+                                    }
+                                    .value {
+                                        color: rgba(51, 51, 51, 1);
+                                    }
+                                }
+                                table {
+                                    border: 1px solid #c7d6ec;
+                                    border-radius: @table-radius;
+                                    border-collapse: unset !important;
+                                    tbody {
+                                        tr {
+                                            &:last-child {
+                                                td {
+                                                    border-bottom: none;
+                                                }
+                                            }
+                                            td {
+                                                padding: 7px;
+                                                white-space: nowrap;
+                                                text-align: center;
+                                                word-break: keep-all;
+                                                border-right: 1px solid #dfe6f4;
+                                                border-bottom: 1px solid rgba(224, 224, 224, 1);
+                                                & a {
+                                                    color: #338bec;
+                                                    text-decoration: none;
+                                                }
+                                                &:last-child {
+                                                    border-right: none;
+                                                }
+                                                .label {
+                                                    display: inline-block;
+                                                    min-width: 60px;
+                                                    height: 24px;
+                                                    margin: 0 5px;
+                                                    padding: 0 5px;
+                                                    color: rgb(41, 178, 71);
+                                                    line-height: 24px;
+                                                    background-color: rgb(221, 243, 231);
+                                                }
+                                            }
+                                        }
+                                        &:first-child {
+                                            background: linear-gradient(#e8eef5 1%, #f7faff 100%);
+                                            th {
+                                                padding: 7px;
+                                                color: rgba(75, 120, 192, 1);
+                                                text-align: center;
+                                                word-break: keep-all;
+                                                border-right: 1px solid #dfe6f4;
+                                                &:first-child {
+                                                    border-top-left-radius: @table-radius;
+                                                }
+                                                &:last-child {
+                                                    border-right: none;
+                                                    border-top-right-radius: @table-radius;
+                                                }
+                                                .cell-item {
+                                                    display: flex;
+                                                    align-items: center;
+                                                    justify-content: center;
+                                                    > span {
+                                                        margin: 0 3px;
+                                                    }
+                                                    cursor: pointer;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

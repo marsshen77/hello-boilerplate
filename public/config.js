@@ -1,6 +1,6 @@
 window.sspConfig = {
-    API_ROOT: 'http://localhost:4001/api',
-    // API_ROOT: 'http://172.16.9.123:7000/ssp/service/api',
+    // API_ROOT: 'http://localhost:4001/api',
+    API_ROOT: 'http://172.16.9.123:7000/ssp/visualservice/api',
     MAP_ROOT: 'http://172.16.9.123:6999',
     FILE_ROOT: 'http://172.16.9.123:7000',
     ESRI_ROOT: {
