@@ -2,7 +2,8 @@ import path from 'path';
 import { argv } from 'yargs';
 
 const __DEV__ = process.env.NODE_ENV === 'development';
-const PublicPath = __DEV__ ? '/' : '/ssp/visual_market/';
+// const PublicPath = __DEV__ ? '/' : '/ssp/visual_market/';
+const PublicPath = __DEV__ ? '/' : '/ui/';
 const ENABLE_ANALYZE = !!argv.analyze;
 const ENABLE_OPEN = argv.open as true | string;
 

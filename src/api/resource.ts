@@ -31,7 +31,7 @@ export const searchAddress = (keyword: string) =>
  * @param data
  */
 export const getBasicInfo = (data: ThirdFetchParams) =>
-    thirdFetch<ThirdFetchResult>('http://www.hyidata.com:8086/getData', 'POST', data);
+    thirdFetch<ThirdFetchResult>(sspConfig.THIRD_API.url, 'POST', data);
 
 /**
  * 获取国民经济分类

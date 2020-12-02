@@ -125,7 +125,29 @@ const LayerData: LayerGroup[] = [
             }
         ]
     },
-    { title: '行政区划' }
+    {
+        title: '行政区划',
+        layers: [
+            {
+                title: '区县',
+                url: 'BaseMap_SZXZQH/MapServer',
+                tch: 2,
+                id: '10'
+            },
+            {
+                title: '镇',
+                url: 'BaseMap_SZXZQH/MapServer',
+                tch: 1,
+                id: '11'
+            },
+            {
+                title: '村',
+                url: 'BaseMap_SZXZQH/MapServer',
+                tch: 0,
+                id: '12'
+            }
+        ]
+    }
 ];
 
 interface LayerControlProps {
@@ -206,10 +228,10 @@ const LayerItem = (props: LayerItemProps) => {
     const getPromiseContent = async (target: any) => {
         console.log(target);
         const body = {
-            username: 'test',
-            password: 'test',
+            username: sspConfig.THIRD_API.username,
+            password: sspConfig.THIRD_API.password,
             reg_no: '',
-            device_id: '1911111738004142',
+            device_id: (target.graphic.attributes.SBID as string).trim(),
             data_type: '特种设备-设备'
         };
         const result = await runInfo(body);
@@ -290,11 +312,13 @@ const LayerItem = (props: LayerItemProps) => {
                         .join('')}</div>`
                 } as __esri.PopupTemplate;
 
-            if (layerInfo.promisePopup)
+            if (layerInfo.promisePopup) {
+                featureLayer.outFields = ['SBID', 'SBSYDD'];
                 featureLayer.popupTemplate = ({
                     title: layerInfo.title,
                     content: getPromiseContent
                 } as unknown) as __esri.PopupTemplate;
+            }
 
             if (featureLayer) map.add(featureLayer);
         }

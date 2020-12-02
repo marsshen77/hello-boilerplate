@@ -12,6 +12,7 @@ interface DictSelectProps {
     /** 显示的当前值 */
     value?: MetaBaseModel;
     defaultValue?: string;
+    defaultCategory?: string;
     /** 选择新值的回调 */
     onChange: (item: MetaBaseModel) => void;
 }
@@ -20,8 +21,9 @@ interface DictSelectProps {
  * @param props
  */
 export const DictSelect = (props: DictSelectProps) => {
+    const { categoryName, defaultCategory = '' } = props;
     const ref = useRef<HTMLDivElement>(null);
-    const { data: result } = useRequest(() => getMetaBaseList(props.categoryName, ''));
+    const { data: result } = useRequest(() => getMetaBaseList(categoryName, defaultCategory));
     const [open, setOpen] = useState(false);
     const getMenuItems = () => {
         return result?.data.map((item) =>

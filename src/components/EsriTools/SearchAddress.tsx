@@ -26,11 +26,12 @@ interface SearchProps {
     view?: EsriView;
     /** 是否显示高级搜索 */
     advanced?: boolean;
+    prefix: string;
 }
 const PAGE_SIZE = 7;
 const SearchAddress = (props: SearchProps) => {
     const LAYER_ID = 'search-address-layer';
-    const { map, view, advanced = false } = props;
+    const { map, view, advanced = false, prefix } = props;
     const [value, setValue] = useState('');
     const [pageIndex, setPageIndex] = useState(1);
     const [show, setShow] = useState(false);
@@ -67,8 +68,7 @@ const SearchAddress = (props: SearchProps) => {
                 } as unknown) as __esri.SpatialReference
             });
             const geometryService = new GeometryService({
-                url:
-                    'http://172.16.9.114:6080/arcgis/rest/services/Utilities/Geometry/GeometryServer'
+                url: prefix + '/GeometryService/GeometryServer'
             });
             const prjParams = new ProjectParameters({
                 geometries: [point],

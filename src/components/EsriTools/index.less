@@ -5,7 +5,7 @@
     height: 36px;
     padding: 0 20px;
     color: white;
-    background-color: rgba(51, 127, 229, 1);
+    background-color: #008ab7;
     > span {
         flex-grow: 1;
     }
@@ -409,6 +409,22 @@
     width: 370px;
     background-color: white;
     box-shadow: 0 2px 8px 0 rgba(136, 136, 136, 0.25);
+    .show-btn {
+        position: absolute;
+        top: -58px;
+        right: 0;
+        > button {
+            width: 54px;
+            min-width: 54px;
+            padding: 7px 8px;
+            background-color: #008ab7;
+            border-radius: 0 2px 2px 0;
+            img {
+                width: 22px;
+                height: 22px;
+            }
+        }
+    }
     .enterprise-search-params {
         > .content {
             padding: 8px;
@@ -511,7 +527,9 @@
                 color: rgba(64, 77, 97, 1);
                 font-size: 14px;
                 font-family: 'Alibaba PuHuiTi Regular';
+                white-space: nowrap;
                 text-align: center;
+                word-break: keep-all;
                 border: none;
             }
         }
@@ -553,7 +571,7 @@
         background-color: white;
         box-shadow: 0 1px 4px 0 rgba(136, 136, 136, 0.25);
         .input {
-            width: 256px;
+            width: 250px;
             padding: 0 15px;
             background-color: white;
             border-radius: 2px 0 0 2px;
@@ -561,14 +579,14 @@
         .clear-input {
             position: absolute;
             top: 5px;
-            left: 225px;
+            right: 60px;
             color: rgb(226 224 224);
             cursor: pointer;
         }
         .button {
             width: 54px;
             min-width: 54px;
-            background-color: rgba(51, 127, 229, 1);
+            background-color: #008ab7;
             border-radius: 0 2px 2px 0;
             img {
                 width: 22px;

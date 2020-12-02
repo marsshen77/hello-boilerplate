@@ -1,6 +1,7 @@
 import './index.less';
-import close_icon from './images/guanbi@2x.png';
 import locate_default_icon from './images/icon_locate.png';
+import advanced_search_img from './images/高级搜索@2x.png';
+import close_icon from './images/guanbi@2x.png';
 
 import React, { useState } from 'react';
 import CustomInput from '../CustomInput';
@@ -45,8 +46,8 @@ interface QueryResultAttribute {
 const EnterpriseSearch = (props: EnterpriseSearchProps) => {
     const PAGE_SIZE = 5;
     const { map, view, prefix } = props;
-    const [type, setType] = useState<MetaBaseModel>();
     const [area, setArea] = useState<MetaBaseModel>();
+    const [open, setOpen] = useState(true);
     const { handleSubmit, register, reset } = useForm<EnterpriseFormType>({
         defaultValues: { name: '', code: '', district: '', area: '', industry: '' }
     });
@@ -65,8 +66,9 @@ const EnterpriseSearch = (props: EnterpriseSearchProps) => {
             if (data.name) sql += `CORP_NAME like '%${data.name}%'`;
             if (data.code) sql += (sql ? ' and ' : '') + `UNI_SC_ID like '%${data.code}%'`;
             if (data.district) sql += (sql ? ' and ' : '') + `ORGAN_NAME like '%${data.district}%'`;
-            if (area?.code) sql += (sql ? ' and ' : '') + `AREA_CODE like '%${area?.code}%'`;
-            if (type?.name) sql += (sql ? ' and ' : '') + `INDUSTRY_NAME like '%${type.name}%'`;
+            if (area?.code) sql += (sql ? ' and ' : '') + `AREA_CODE = '%{area?.code}'`;
+            if (data.industry)
+                sql += (sql ? ' and ' : '') + `INDUSTRY_NAME like '%${data.industry}%'`;
             query.returnGeometry = true;
             query.where = sql;
             query.outFields = ['CORP_NAME', 'UNI_SC_ID'];
@@ -87,23 +89,22 @@ const EnterpriseSearch = (props: EnterpriseSearchProps) => {
         view?.graphics.removeAll();
         view?.popup.close();
         setCurrentResult(null);
-        setType(undefined);
         setArea(undefined);
     };
     const handleRowClick = async (item: QueryResultAttribute) => {
-        if (view) {
+        if (view && item.UNI_SC_ID) {
             view.graphics.removeAll();
             const [Graphic] = await (loadModules(['esri/Graphic']) as Promise<LocationEsriModels>);
             const body = {
-                username: 'test',
-                password: 'test',
-                reg_no: '91320506MA20U3WD29',
+                username: sspConfig.THIRD_API.username,
+                password: sspConfig.THIRD_API.password,
+                reg_no: item.UNI_SC_ID as string,
                 data_type: '主体基本信息'
             };
             const bodyYear = {
                 username: 'test',
                 password: 'test',
-                reg_no: '91320506598640378W',
+                reg_no: item.UNI_SC_ID as string,
                 data_type: '年报'
             };
             const result = await runInfo(body);
@@ -164,6 +165,8 @@ const EnterpriseSearch = (props: EnterpriseSearchProps) => {
             });
             view.graphics.add(graphic);
             view.goTo(item.geometry, { duration: 400 });
+        } else {
+            console.error('统一社会信用代码未找到');
         }
     };
     const columns: EasyTableColumn<QueryResultAttribute>[] = [
@@ -178,66 +181,100 @@ const EnterpriseSearch = (props: EnterpriseSearchProps) => {
     ];
     return (
         <div className="enterprise-search-container">
-            <div className="enterprise-search-params">
-                <div className="esri-blue-title">
-                    <span>企业搜索</span>
-                </div>
-                <div className="content">
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <CustomInput label="企业名称" labelWidth={100} width={355} colon={false}>
-                            <InputBase inputRef={register({})} name="name" />
-                        </CustomInput>
-                        <CustomInput label="信用代码" labelWidth={100} width={355} colon={false}>
-                            <InputBase inputRef={register({})} name="code" />
-                        </CustomInput>
-                        <CustomInput label="所属管区" labelWidth={100} width={355} colon={false}>
-                            <InputBase inputRef={register({})} name="district" />
-                        </CustomInput>
-                        <CustomInput label="所属区域" labelWidth={100} width={355} colon={false}>
-                            <DictSelect
-                                onChange={(value) => setArea(value)}
-                                value={area}
-                                categoryName="行政区划"
-                                defaultValue="选择区域"
-                            />
-                        </CustomInput>
-                        <CustomInput label="所属行业" labelWidth={100} width={355} colon={false}>
-                            <DictSelect
-                                onChange={(value) => setType(value)}
-                                value={type}
-                                categoryName="行业分类代码"
-                                defaultValue="选择行业"
-                            />
-                        </CustomInput>
-                        <div className="buttons">
-                            <Button className="blue-border-button" onClick={handleReset}>
-                                重置
-                            </Button>
-                            <Button className="blue-border-button" type="submit">
-                                查询
-                            </Button>
-                        </div>
-                    </form>
-                </div>
+            <div className="show-btn">
+                <Button className="button advanced" onClick={() => setOpen(true)}>
+                    <img src={advanced_search_img} alt="高级搜索" />
+                </Button>
             </div>
-            {currentResult && (
-                <div className="enterprise-search-result">
-                    <QueryResultTotalCount total={currentResult.length} />
-                    <div className="content">
-                        <EasyTable
-                            columns={columns}
-                            data={currentResult.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)}
-                            onRowClick={handleRowClick}
-                            className="query-result-table"
-                            pagination={{
-                                page: page,
-                                count: Math.ceil(currentResult.length / PAGE_SIZE),
-                                onChange: (index) => setPage(index)
-                            }}
+            <div className="content" style={{ display: open ? 'block' : 'none' }}>
+                <div className="enterprise-search-params">
+                    <div className="esri-blue-title">
+                        <span>企业搜索</span>
+                        <img
+                            className="close-icon"
+                            src={close_icon}
+                            alt=""
+                            onClick={() => setOpen(false)}
                         />
                     </div>
+                    <div className="content">
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <CustomInput
+                                label="企业名称"
+                                labelWidth={110}
+                                width={355}
+                                colon={false}
+                            >
+                                <InputBase inputRef={register({})} name="name" />
+                            </CustomInput>
+                            <CustomInput
+                                label="信用代码"
+                                labelWidth={110}
+                                width={355}
+                                colon={false}
+                            >
+                                <InputBase inputRef={register({})} name="code" />
+                            </CustomInput>
+                            <CustomInput
+                                label="所属管区"
+                                labelWidth={110}
+                                width={355}
+                                colon={false}
+                            >
+                                <InputBase inputRef={register({})} name="district" />
+                            </CustomInput>
+                            <CustomInput
+                                label="所属区域"
+                                labelWidth={110}
+                                width={355}
+                                colon={false}
+                            >
+                                <DictSelect
+                                    onChange={(value) => setArea(value)}
+                                    value={area}
+                                    categoryName="行政区划"
+                                    defaultValue="选择区域"
+                                    defaultCategory="320500"
+                                />
+                            </CustomInput>
+                            <CustomInput
+                                label="所属行业"
+                                labelWidth={110}
+                                width={355}
+                                colon={false}
+                            >
+                                <InputBase inputRef={register({})} name="industry" />
+                            </CustomInput>
+                            <div className="buttons">
+                                <Button className="blue-border-button" onClick={handleReset}>
+                                    重置
+                                </Button>
+                                <Button className="blue-border-button" type="submit">
+                                    查询
+                                </Button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            )}
+                {currentResult && (
+                    <div className="enterprise-search-result">
+                        <QueryResultTotalCount total={currentResult.length} />
+                        <div className="content">
+                            <EasyTable
+                                columns={columns}
+                                data={currentResult.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)}
+                                onRowClick={handleRowClick}
+                                className="query-result-table"
+                                pagination={{
+                                    page: page,
+                                    count: Math.ceil(currentResult.length / PAGE_SIZE),
+                                    onChange: (index) => setPage(index)
+                                }}
+                            />
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

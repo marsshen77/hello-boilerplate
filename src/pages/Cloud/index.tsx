@@ -71,7 +71,7 @@ const Cloud = () => {
                 onLayerVisibleChange={(show) => setShowLayer(show)}
                 layerVisible={showLayer}
             />
-            <SearchAddress map={map} view={view} />
+            <SearchAddress prefix={prefix} map={map} view={view} />
             <ZoomControl view={view} map={map} prefix={prefix} />
             <LayerControl
                 prefix={prefix}
