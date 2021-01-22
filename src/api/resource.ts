@@ -1,6 +1,7 @@
 import { LegendModel } from '@/typings/esri';
 import {
     AddressListModel,
+    EnterPriseClusterResult,
     MetaBaseModel,
     ThirdFetchParams,
     ThirdFetchResult
@@ -48,3 +49,10 @@ export const getMetaBaseList = (category: string, parentCode: string) =>
     sspFetch<MetaBaseModel[]>({
         url: `${path}getMetaBaseList?category=${category}&parentCode=${parentCode}`
     });
+
+/**
+ * 获取企业聚合数据
+ * @param key
+ */
+export const getEnterpriseCluster = (key: string) =>
+    sspFetch<EnterPriseClusterResult>({ url: `/test.json` });

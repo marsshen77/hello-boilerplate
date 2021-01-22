@@ -37,3 +37,17 @@ export interface MetaBaseModel {
     parentCode: string;
     hasChild: number;
 }
+
+export interface EnterPriseClusterResult {
+    sourceBeanList: EnterpriseClusterItem[];
+}
+export interface EnterpriseClusterItem {
+    /** 名称 */
+    name: string;
+    /** 数量 */
+    count: number;
+    /** 经度 */
+    x: string;
+    /** 纬度 */
+    y: string;
+}

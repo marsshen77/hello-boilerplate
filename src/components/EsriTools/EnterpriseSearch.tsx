@@ -66,7 +66,7 @@ const EnterpriseSearch = (props: EnterpriseSearchProps) => {
             if (data.name) sql += `CORP_NAME like '%${data.name}%'`;
             if (data.code) sql += (sql ? ' and ' : '') + `UNI_SC_ID like '%${data.code}%'`;
             if (data.district) sql += (sql ? ' and ' : '') + `ORGAN_NAME like '%${data.district}%'`;
-            if (area?.code) sql += (sql ? ' and ' : '') + `AREA_CODE = '%{area?.code}'`;
+            if (area?.code) sql += (sql ? ' and ' : '') + `AREA_CODE = '${area?.code}'`;
             if (data.industry)
                 sql += (sql ? ' and ' : '') + `INDUSTRY_NAME like '%${data.industry}%'`;
             query.returnGeometry = true;
@@ -76,6 +76,7 @@ const EnterpriseSearch = (props: EnterpriseSearchProps) => {
             setCurrentResult(
                 queryResult.features.map((f) => ({ ...f.attributes, geometry: f.geometry }))
             );
+            setPage(1);
         }
     };
     const handleReset = () => {

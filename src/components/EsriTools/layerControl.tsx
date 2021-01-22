@@ -2,6 +2,7 @@ import './index.less';
 import layer_title_icon from './images/tuceng-title@2x.png';
 import collapse_icon from './images/collapse.png';
 import close_icon from './images/guanbi@2x.png';
+import six_img from './images/sixside.png';
 
 import { EsriMap } from '@/typings/esri';
 import { Checkbox, Collapse, FormControlLabel } from '@material-ui/core';
@@ -9,9 +10,9 @@ import { CheckBoxOutlined } from '@material-ui/icons';
 import { loadModules } from 'esri-loader';
 import React, { useRef, useState } from 'react';
 import { LegendServer } from './Legend';
-import { getBasicInfo } from '@/api/resource';
+import { getBasicInfo, getEnterpriseCluster } from '@/api/resource';
 import { useRequest } from 'ahooks';
-import { ThirdResultData } from '@/typings/resource';
+import { EnterPriseClusterResult, ThirdResultData } from '@/typings/resource';
 
 interface LayerInfo {
     title: string;
@@ -30,6 +31,7 @@ const LayerData: LayerGroup[] = [
     {
         title: '专题图层',
         layers: [
+            { title: '企业法人', url: '', tch: 0, id: 'enterprise' },
             {
                 title: '特种设备',
                 url: 'TZSB/MapServer',
@@ -215,6 +217,7 @@ const LayerItem = (props: LayerItemProps) => {
         data.layers ? data.layers.map((_) => false) : [false]
     );
     const { run: runInfo } = useRequest(getBasicInfo, { manual: true });
+    const { run: runEp } = useRequest(getEnterpriseCluster, { manual: true });
 
     const handleChange = (index: number, checked: boolean, layerInfo: LayerInfo) => {
         if (map && prefix) {
@@ -253,74 +256,140 @@ const LayerItem = (props: LayerItemProps) => {
         if (layer) {
             layer.visible = checked;
         } else {
-            const fields = layerInfo.fields;
-            const [FeatureLayer] = await (loadModules([
-                'esri/layers/FeatureLayer'
-            ]) as Promise<LayerControlEsriModels>);
-            let url = `${prefix}/${layerInfo.url}/${layerInfo.tch}`;
-            const featureLayer = new FeatureLayer({ url, id: layerInfo.id });
-            if (layerInfo.cluster) {
-                const clusterConfig = {
-                    type: 'cluster',
-                    clusterRadius: '400px',
-                    clusterMinSize: '24px',
-                    clusterMaxSize: '60px',
-                    labelingInfo: [
-                        {
-                            deconflictionStrategy: 'none',
-                            labelExpressionInfo: {
-                                expression: "Text($feature.cluster_count, '#,###')"
-                            },
-                            symbol: {
-                                type: 'text',
-                                color: '#0b4000',
-                                font: {
-                                    weight: 'bold',
-                                    family: 'Noto Sans',
-                                    size: '14px'
+            if (layerInfo.id === 'enterprise') {
+                const resp = await fetch('/test.json');
+                const result: EnterPriseClusterResult = await resp.json();
+                const [GraphicsLayer, Graphic] = await (loadModules([
+                    'esri/layers/GraphicsLayer',
+                    'esri/Graphic'
+                ]) as Promise<
+                    [typeof import('esri/layers/GraphicsLayer'), typeof import('esri/Graphic')]
+                >);
+                const layer = new GraphicsLayer({ id: layerInfo.id });
+                result.sourceBeanList.forEach((item) => {
+                    const point = {
+                        type: 'point',
+                        longitude: Number(item.x),
+                        latitude: Number(item.y)
+                    };
+                    const textSymbol1 = {
+                        type: 'text',
+                        color: 'black',
+                        haloColor: 'white',
+                        haloSize: '1px',
+                        text: item.name,
+                        xoffset: 0,
+                        yoffset: '24px',
+                        font: {
+                            size: '24px',
+                            weight: 'bold'
+                        }
+                    };
+                    const textSymbol2 = {
+                        type: 'text',
+                        color: 'rgba(14, 155, 255, 1)',
+                        haloColor: 'white',
+                        haloSize: '1px',
+                        text: item.count,
+                        xoffset: 0,
+                        yoffset: '40px',
+                        font: {
+                            size: '40px',
+                            weight: 'bold'
+                        }
+                    };
+                    const pictureSymbol = {
+                        type: 'picture-marker', // autocasts as new PictureMarkerSymbol()
+                        url: six_img,
+                        width: '204px',
+                        height: '178px'
+                    };
+                    const graphic1 = new Graphic({
+                        geometry: point as __esri.GeometryProperties,
+                        symbol: textSymbol2
+                    });
+                    const graphic2 = new Graphic({
+                        geometry: point as __esri.GeometryProperties,
+                        symbol: textSymbol1
+                    });
+                    const graphic3 = new Graphic({
+                        geometry: point as __esri.GeometryProperties,
+                        symbol: pictureSymbol as __esri.SymbolProperties
+                    });
+                    layer.add(graphic3);
+                    layer.add(graphic2);
+                    layer.add(graphic1);
+                });
+                map.add(layer);
+            } else {
+                const fields = layerInfo.fields;
+                const [FeatureLayer] = await (loadModules([
+                    'esri/layers/FeatureLayer'
+                ]) as Promise<LayerControlEsriModels>);
+                let url = `${prefix}/${layerInfo.url}/${layerInfo.tch}`;
+                const featureLayer = new FeatureLayer({ url, id: layerInfo.id });
+                if (layerInfo.cluster) {
+                    const clusterConfig = {
+                        type: 'cluster',
+                        clusterRadius: '400px',
+                        clusterMinSize: '24px',
+                        clusterMaxSize: '60px',
+                        labelingInfo: [
+                            {
+                                deconflictionStrategy: 'none',
+                                labelExpressionInfo: {
+                                    expression: "Text($feature.cluster_count, '#,###')"
                                 },
-                                haloColor: 'white',
-                                haloSize: '1px'
-                            },
-                            labelPlacement: 'center-center'
+                                symbol: {
+                                    type: 'text',
+                                    color: '#0b4000',
+                                    font: {
+                                        weight: 'bold',
+                                        family: 'Noto Sans',
+                                        size: '14px'
+                                    },
+                                    haloColor: 'white',
+                                    haloSize: '1px'
+                                },
+                                labelPlacement: 'center-center'
+                            }
+                        ]
+                    };
+                    featureLayer.featureReduction = (clusterConfig as unknown) as __esri.FeatureReductionCluster;
+                    featureLayer.renderer = ({
+                        type: 'simple',
+                        field: 'mag',
+                        symbol: {
+                            type: 'simple-marker',
+                            size: 10,
+                            color: 'rgba(29,174,0,0.3)',
+                            outline: {
+                                color: 'rgba(29,174,0,0.15)',
+                                width: 10
+                            }
                         }
-                    ]
-                };
-                featureLayer.featureReduction = (clusterConfig as unknown) as __esri.FeatureReductionCluster;
-                featureLayer.renderer = ({
-                    type: 'simple',
-                    field: 'mag',
-                    symbol: {
-                        type: 'simple-marker',
-                        size: 10,
-                        color: 'rgba(29,174,0,0.3)',
-                        outline: {
-                            color: 'rgba(29,174,0,0.15)',
-                            width: 10
-                        }
-                    }
-                } as unknown) as __esri.Renderer;
-            }
-            if (fields && fields.length > 0)
-                featureLayer.popupTemplate = {
-                    title: layerInfo.title,
-                    content: `<div class="custom-popup-content">${fields
-                        .map(
-                            (item) =>
-                                `<div><span class="name">${item[0]}：</span><span class="value">{${item[1]}}</span></div>`
-                        )
-                        .join('')}</div>`
-                } as __esri.PopupTemplate;
+                    } as unknown) as __esri.Renderer;
+                }
+                if (fields && fields.length > 0)
+                    featureLayer.popupTemplate = {
+                        title: layerInfo.title,
+                        content: `<div class="custom-popup-content">${fields
+                            .map(
+                                (item) =>
+                                    `<div><span class="name">${item[0]}：</span><span class="value">{${item[1]}}</span></div>`
+                            )
+                            .join('')}</div>`
+                    } as __esri.PopupTemplate;
 
-            if (layerInfo.promisePopup) {
-                featureLayer.outFields = ['SBID', 'SBSYDD'];
-                featureLayer.popupTemplate = ({
-                    title: layerInfo.title,
-                    content: getPromiseContent
-                } as unknown) as __esri.PopupTemplate;
+                if (layerInfo.promisePopup) {
+                    featureLayer.outFields = ['SBID', 'SBSYDD'];
+                    featureLayer.popupTemplate = ({
+                        title: layerInfo.title,
+                        content: getPromiseContent
+                    } as unknown) as __esri.PopupTemplate;
+                }
+                if (featureLayer) map.add(featureLayer);
             }
-
-            if (featureLayer) map.add(featureLayer);
         }
     };
 
